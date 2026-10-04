@@ -1,0 +1,72 @@
+import os
+from typing import Literal
+
+from dotenv import load_dotenv, find_dotenv
+from langchain.tools import tool
+from tavily import TavilyClient
+from langchain.chat_models import init_chat_model
+from deepagents import create_deep_agent
+load_dotenv(find_dotenv())
+
+tavily_key = os.getenv("TAVILY_API_KEY")
+llm_name = os.getenv("deepseek_flash")
+# Tavily 客户端负责真正的联网搜索，工具函数中会复用这个客户端
+tavily_client = TavilyClient(api_key=tavily_key)
+
+
+@tool
+def internet_search(
+    query: str,
+    max_results: int = 5,
+    topic: Literal["news", "finance", "general"] = "general",
+    include_raw_content: bool = False,
+):
+    """
+    互联网搜索工具
+
+    DeepAgent 会根据工具描述和参数签名，自动决定是否调用该工具
+    :param query: 搜索关键词
+    :param max_results: 返回结果数量
+    :param topic: 查询主题，可选 news、finance、general
+    :param include_raw_content: 是否返回更详细的原文内容，include_raw_content=False 时返回摘要内容；True 时会尝试返回更完整的网页原文
+    :return: Tavily 搜索结果
+    """
+    print(
+        f"开始调用网络搜索工具，核心参数为：{query},{max_results},{topic},{include_raw_content}"
+    )
+    return tavily_client.search(
+        query=query,
+        max_results=max_results,
+        topic=topic,
+        include_raw_content=include_raw_content,
+    )
+
+llm = init_chat_model(model=llm_name,model_provider="deepseek")
+
+# 当前示例不配置子智能体，重点观察“主智能体 + 搜索工具”的基本流程
+deep_agent = create_deep_agent(
+    model=llm,
+    tools=[internet_search],
+    subagents=[],
+    system_prompt="""
+    你是一名严谨的研究员，可以使用 internet_search 工具检索网络信息。
+    请根据检索结果进行归纳、分析和交叉验证，生成一份结构清晰、信息可靠的中文报告。
+    """,
+)
+# 非流式执行，invoke 会等整条 agent 链路完成后，一次性返回最终状态
+result = deep_agent.invoke(
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "请查询人工智能和机器人领域的热门新闻信息，并整理为一份简要报告。",
+            }
+        ]
+    }
+)
+
+# result 中会保留完整消息轨迹，便于观察模型决策、工具返回和最终回答
+print(result)
+
+# messages 的最后一条通常就是 DeepAgent 整理后的最终回答
+print(result["messages"][-1].content)

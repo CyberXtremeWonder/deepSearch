@@ -1,0 +1,57 @@
+Java 语言介绍
+=============
+
+一、概述
+Java 是由 Sun Microsystems（现属 Oracle）于 1995 年正式发布的一种面向对象的、
+跨平台的高级编程语言。最初由 James Gosling 及其团队开发，项目原名 Oak，后
+更名为 Java。Java 的核心理念是"一次编写，到处运行"（Write Once, Run
+Anywhere，WORA），即编译后的字节码可以在任何安装了 Java 虚拟机的平台上运行。
+
+二、核心特点
+1. 面向对象：支持封装、继承、多态，除基本类型外一切皆对象。
+2. 跨平台：源代码编译为字节码（.class 文件），由 JVM（Java 虚拟机）解释或
+   JIT 编译执行，屏蔽了底层操作系统的差异。
+3. 自动内存管理：通过垃圾回收器（Garbage Collector）自动回收不再使用的对象，
+   降低内存泄漏风险。
+4. 强类型与静态检查：变量与表达式类型在编译期确定，有助于早期发现错误。
+5. 多线程支持：语言层面内置线程与并发工具包（java.util.concurrent）。
+6. 丰富的标准库与生态：集合框架、I/O、网络、JDBC、Swing/JavaFX 等，以及
+   Maven、Gradle、Spring 等成熟的第三方生态。
+7. 安全性与健壮性：取消指针算术、提供异常处理机制、类加载器与安全管理器
+   提供沙箱能力。
+
+三、技术体系与版本
+- Java SE（Standard Edition）：标准版，包含语言核心与桌面/基础库，是最常用的基础。
+- Java EE / Jakarta EE（Enterprise Edition）：企业版，提供 Servlet、JSP、EJB、
+  JPA 等企业级规范。
+- Java ME（Micro Edition）：面向嵌入式与移动设备的精简版（现已基本被 Android 取代）。
+- 版本演进：1995 年 JDK 1.0 发布；2004 年 Java 5 引入泛型、注解、自动装箱；
+  2014 年 Java 8 引入 Lambda 表达式与 Stream API；自 Java 9 起改为每半年发布
+  一个新特性版本，并设 LTS（长期支持）版本，如 Java 11、17、21 等。
+
+四、运行机制
+1. 编写源码：以 .java 为扩展名。
+2. 编译：由 javac 编译为平台无关的字节码 .class 文件。
+3. 加载：JVM 的类加载器加载字节码。
+4. 执行：JVM 解释执行，热点代码由 JIT 即时编译为本地机器码以提升性能。
+5. 内存模型：堆（对象）、栈（局部变量与方法调用）、方法区（类元信息）等区域
+   由 JVM 统一管理。
+
+五、典型应用场景
+- 企业级后端服务（Spring Boot、微服务架构）
+- Android 移动应用开发
+- 大数据处理（Hadoop、Spark、Flink 均基于 JVM）
+- 金融、电商等高并发交易系统
+- 桌面应用与工具软件
+
+六、简单示例
+    public class HelloWorld {
+        public static void main(String[] args) {
+            System.out.println("Hello, Java!");
+        }
+    }
+
+七、优势与局限
+优势：跨平台、生态成熟、性能稳定、社区庞大、就业需求广。
+局限：相比 C/C++ 内存开销较大、启动时间较长（可用 GraalVM 原生镜像缓解）、
+语法相对冗长（近年通过 var、记录类、模式匹配等特性逐步改善）。
